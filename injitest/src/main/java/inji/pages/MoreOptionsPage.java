@@ -12,7 +12,7 @@ public class MoreOptionsPage extends BasePage {
 //    @iOSXCUITFindBy(accessibility = "removeFromWallet")
 //    private WebElement removeFromWalletButton;
 
-    @AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"removeFromWallet\"))")
+    @AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description(\"outlined-delete-icon\"))")
     @iOSXCUITFindBy(accessibility = "removeFromWallet")
     private WebElement removeFromWalletButton;
 
@@ -48,6 +48,15 @@ public class MoreOptionsPage extends BasePage {
     @iOSXCUITFindBy(accessibility = "activated")
     private WebElement activated;
 
+    @AndroidFindBy(accessibility = "enableVerification")
+    @iOSXCUITFindBy(accessibility = "enableVerification")
+    private WebElement enableVerification;
+
+    @AndroidFindBy(accessibility = "shareVcWithSelfieFromKebab")
+    @iOSXCUITFindBy(accessibility = "shareVcWithSelfieFromKebab")
+    private WebElement shareVcWithSelfieFromKebab;
+
+
     public MoreOptionsPage(AppiumDriver driver) {
         super(driver);
     }
@@ -57,6 +66,7 @@ public class MoreOptionsPage extends BasePage {
     }
 
     public PleaseConfirmPopupPage clickOnRemoveFromWallet() {
+        IosUtil.scrollToElement(driver, 59, 755, 119, 20);
         clickOnElement(removeFromWalletButton);
         return new PleaseConfirmPopupPage(driver);
     }
@@ -81,7 +91,9 @@ public class MoreOptionsPage extends BasePage {
     }
 
     public HomePage clickOnCloseButton() {
-        clickOnElement(closeButton);
+        if(isElementDisplayed(closeButton)) {
+            clickOnElement(closeButton);
+        }
         return new HomePage(driver);
     }
 
@@ -91,5 +103,17 @@ public class MoreOptionsPage extends BasePage {
 
     public boolean isVcActivatedDisplayed() {
         return this.isElementDisplayed(activatedForOnlineLoginButton);
+    }
+
+    public void clickOnActivationButton() {
+        clickOnElement(enableVerification);
+    }
+
+    public void clickOnDetailsViewActivationButton() {
+        clickOnElement(activationPending);
+    }
+
+    public void clickOnShareVcWithSelfieFromKebabButton() {
+        clickOnElement(shareVcWithSelfieFromKebab);
     }
 }

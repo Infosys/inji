@@ -91,10 +91,13 @@ public class DetailedVcViewPage extends BasePage{
     @iOSXCUITFindBy(accessibility = "goBack")
     public WebElement backArrow;
 
+    @AndroidFindBy(accessibility = "arrow-left")
+    @iOSXCUITFindBy(accessibility = "arrow-left")
+    public WebElement arrowleft;
+
     @AndroidFindBy(accessibility = "KebabIcon")
     @iOSXCUITFindBy(accessibility = "KebabIcon")
     public WebElement moreOptionsButton;
-
 
     public DetailedVcViewPage(AppiumDriver driver) {
         super(driver);
@@ -145,7 +148,7 @@ public class DetailedVcViewPage extends BasePage{
     }
 
     public PleaseConfirmPopupPage clickOnActivateButtonAndroid(){
-        IosUtil.scrollToElement(driver,58,712,160,129);
+//        IosUtil.scrollToElement(driver,58,712,160,129);
         clickOnElement(activateButton);
         return new PleaseConfirmPopupPage(driver);
     }
@@ -162,6 +165,11 @@ public class DetailedVcViewPage extends BasePage{
 
     public HomePage clickOnBackArrow() {
         clickOnElement(backArrow);
+        return new HomePage(driver);
+    }
+
+    public HomePage clickOnArrowleft() {
+        clickOnElement(arrowleft);
         return new HomePage(driver);
     }
 
@@ -203,9 +211,13 @@ public class DetailedVcViewPage extends BasePage{
     }
 
     public void clickOnMoreOptionsInDetails() {
-        if(retrieIsElementVisible(moreOptionsButton)) {
-            clickOnElement(moreOptionsButton);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        clickOnElement(moreOptionsButton);
     }
+
 
 }

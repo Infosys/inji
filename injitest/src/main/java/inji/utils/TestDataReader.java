@@ -35,7 +35,7 @@ public class TestDataReader {
             case "fullName":
                 return "TEST_FULLNAMEeng";
             case "idType":
-                return "National ID";
+                return "MOSIP National ID";
             case "gender":
                 return "MLEeng";
             case "genderVidEsignet":
@@ -65,7 +65,7 @@ public class TestDataReader {
             case "uin":
                 return UinGenerationUtil.getRandomUin();
             case "uin2":
-                return "5945769861";
+                return "2162743612";
             case "uin2FullName":
                 return "TEST_FULLNAMEeng";
             case "newEnv":
@@ -75,22 +75,28 @@ public class TestDataReader {
             case "invalidenv":
                 return "https://api.dev3.mosip";
             case "fullNameSunbird":
-                return "Aswin";
+                return "PolicyTestAutomation";
             case "policyNameSunbird":
-                return "Talapathy Rasigar Mandram";
+                return "Start Insurance Gold Premium";
             case "policyNumberSunbird":
-                return "1234567890";
+                return "120-720-24";
             case "idTypeSunbird":
-                return "Insurance Card";
+                return "Health Insurance";
+            case "idTypeSunbirdHindi":
+                return "Health Insurance";
             case "phoneNumberSunbird":
-                return "8220255752";
+                return "0123456789";
             case "dateOfBirthSunbird":
-                return "01/01/2024";
+                return "2024-01-01";
             case "genderValueSunbird":
-                return "Female";
+                return "Male";
             case "emailIdValueSunbird":
-                return "santhosdss14@gmail.com";
+                return "abhishek@gmail.com";
             case "statusValueSunbird":
+                return "Valid";
+            case "statusValueSunbirdForVaild":
+                return "Valid";
+            case "statusForEsignet":
                 return "Valid";
             case "isDeviceFarmRun":
                 return "true";

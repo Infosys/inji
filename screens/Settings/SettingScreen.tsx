@@ -26,12 +26,7 @@ const LanguageSetting: React.FC = () => {
     <LanguageSelector
       triggerComponent={
         <ListItem {...testIDProps('language')}>
-          <Icon
-            name="globe"
-            size={22}
-            type="simple-line-icon"
-            color={Theme.Colors.Icon}
-          />
+          {SvgImage.settingsLanguageIcon(24)}
           <ListItem.Content>
             <ListItem.Title
               {...testIDProps('languageTitle')}
@@ -132,13 +127,9 @@ export const SettingScreen: React.FC<
           />
 
           <LanguageSetting />
+
           <ListItem topDivider disabled={!controller.canUseBiometrics}>
-            <Icon
-              type={'MaterialCommunityIcons'}
-              name={'fingerprint'}
-              color={Theme.Colors.Icon}
-              size={25}
-            />
+          {SvgImage.fingerprintIcon(24)}
             <ListItem.Content>
               <ListItem.Title
                 {...testIDProps('bioUnlock')}
@@ -198,12 +189,7 @@ export const SettingScreen: React.FC<
             topDivider
             bottomDivider
             onPress={() => controller.INJI_TOUR_GUIDE()}>
-            <Icon
-              type={'antdesign'}
-              name={'book'}
-              color={Theme.Colors.Icon}
-              size={25}
-            />
+            {SvgImage.coloredInfo()}
             <ListItem.Content>
               <ListItem.Title
                 {...testIDProps('injiTourGuide')}
@@ -216,12 +202,7 @@ export const SettingScreen: React.FC<
           </ListItem>
 
           <ListItem onPress={controller.LOGOUT}>
-            <Icon
-              name="logout"
-              type="fontawesome"
-              size={22}
-              color={Theme.Colors.Icon}
-            />
+          {SvgImage.logOutIcon()}
             <ListItem.Content>
               <ListItem.Title
                 {...testIDProps('logout')}

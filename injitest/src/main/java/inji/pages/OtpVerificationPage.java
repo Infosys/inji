@@ -22,10 +22,10 @@ public class OtpVerificationPage extends BasePage {
     private WebElement invalidOtpMessage;
 
     @AndroidFindBy(accessibility = "walletBindingErrorTitle")
-    @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeStaticText[`label == \"Something is wrong. Please try again later!\"`]")
+    @iOSXCUITFindBy(accessibility = "walletBindingErrorTitle")
     private WebElement invalidOtpMessageInVcActivation;
 
-    @AndroidFindBy(xpath = "cancel")
+    @AndroidFindBy(xpath = "//*[@text=\"Cancel\"]")
     @iOSXCUITFindBy(accessibility = "cancel")
     private WebElement cancelButton;
 
@@ -60,6 +60,11 @@ public class OtpVerificationPage extends BasePage {
     @iOSXCUITFindBy(accessibility = "wait")
     private WebElement waitPopupButton;
 
+
+    @AndroidFindBy(uiAutomator = "new UiSelector().textContains(\"OTP is invalid\")")
+    @iOSXCUITFindBy(accessibility = "OTP is invalid")
+    private WebElement invalidOtpMessageforEsignet;
+
     public OtpVerificationPage(AppiumDriver driver) {
         super(driver);
     }
@@ -87,6 +92,15 @@ public class OtpVerificationPage extends BasePage {
             throw new RuntimeException(e);
         }
         return this.isElementDisplayed(invalidOtpMessage);
+    }
+
+    public boolean invalidOtpMessageForEsignetDisplayed() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return this.isElementDisplayed(invalidOtpMessageforEsignet);
     }
 
     public boolean somethingWetWrongInVcActivationDisplayed() {

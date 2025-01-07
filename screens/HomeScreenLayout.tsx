@@ -2,19 +2,18 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Icon} from 'react-native-elements';
 import {Row, Text} from '../components/ui';
 import {Header} from '../components/ui/Header';
 import {Theme} from '../components/ui/styleUtils';
 import {RootRouteProps} from '../routes';
 import {HomeScreen} from './Home/HomeScreen';
 import {IssuersScreen} from './Issuers/IssuersScreen';
-import {SettingScreen} from './Settings/SettingScreen';
-import testIDProps from '../shared/commonUtil';
 import {SvgImage} from '../components/ui/svg';
 import {HelpScreen} from '../components/HelpScreen';
 import {I18nManager, View} from 'react-native';
 import {isIOS} from '../shared/constants';
+import {Copilot} from '../components/ui/Copilot';
+import LinearGradient from 'react-native-linear-gradient';
 
 export const HomeScreenLayout: React.FC<RootRouteProps> = props => {
   const {t} = useTranslation('IssuersScreen');
@@ -48,16 +47,25 @@ export const HomeScreenLayout: React.FC<RootRouteProps> = props => {
     <HelpScreen
       source={'Inji'}
       triggerComponent={
-        <View testID="help" style={Theme.HelpScreenStyle.viewStyle}>
-          <Row crossAlign="center" style={Theme.HelpScreenStyle.rowStyle}>
-            <View testID="helpIcon" style={Theme.HelpScreenStyle.iconStyle}>
-              {SvgImage.infoIcon()}
+        <Copilot
+          title={t('copilot:helpTitle')}
+          description={t('copilot:helpMessage')}
+          order={1}
+          children={
+            <LinearGradient style={{borderRadius: 8}} colors={Theme.Colors.GradientColorsLight} start={Theme.LinearGradientDirection.start} end={Theme.LinearGradientDirection.end}><View style={Theme.HelpScreenStyle.viewStyle}>
+            <Row crossAlign="center" style={Theme.HelpScreenStyle.rowStyle}>
+              <View testID="helpIcon" style={Theme.HelpScreenStyle.iconStyle}>
+                {SvgImage.coloredInfo()}
+              </View>
+              <Text testID="helpText" style={Theme.HelpScreenStyle.labelStyle}>
+                {t('help')}
+              </Text>
+              
+            </Row>
             </View>
-            <Text testID="helpText" style={Theme.HelpScreenStyle.labelStyle}>
-              {t('help')}
-            </Text>
-          </Row>
-        </View>
+            </LinearGradient>
+          }
+        />
       }
     />
   );
@@ -65,10 +73,15 @@ export const HomeScreenLayout: React.FC<RootRouteProps> = props => {
   const [isRTL] = useState(I18nManager.isRTL);
 
   var HomeScreenOptions = {
-    headerLeft: () => (isIOS() || !isRTL ? SvgImage.InjiLogo() : screenOptions),
+    headerLeft: () =>
+      isIOS() || !isRTL
+        ? SvgImage.InjiLogo(Theme.Styles.injiLogo)
+        : screenOptions,
     headerTitle: '',
     headerRight: () =>
-      isIOS() || !isRTL ? screenOptions : SvgImage.InjiLogo(),
+      isIOS() || !isRTL
+        ? screenOptions
+        : SvgImage.InjiLogo(Theme.Styles.injiLogo),
   };
 
   return (

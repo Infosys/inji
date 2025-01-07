@@ -4,6 +4,10 @@ import {vcMetaMachine} from './VCMetaMachine';
 
 type State = StateFrom<typeof vcMetaMachine>;
 
+export function selectVerificationStatus(state: State) {
+  return state.context.verificationStatus;
+}
+
 export function selectMyVcsMetadata(state: State): VCMetadata[] {
   return state.context.myVcsMetadata;
 }
@@ -11,7 +15,6 @@ export function selectMyVcsMetadata(state: State): VCMetadata[] {
 export function selectShareableVcsMetadata(state: State): VCMetadata[] {
   return state.context.myVcsMetadata.filter(
     vcMetadata =>
-      state.context.myVcs[vcMetadata.getVcKey()]?.credential != null ||
       state.context.myVcs[vcMetadata.getVcKey()]?.verifiableCredential != null,
   );
 }
@@ -72,4 +75,8 @@ export function selectMyVcs(state: State) {
 
 export function selectVerificationErrorMessage(state: State) {
   return state.context.verificationErrorMessage;
+}
+
+export function selectIsDownloadingFailed(state: State) {
+  return state.context.DownloadingCredentialsFailed;
 }

@@ -17,10 +17,10 @@ import {
   MY_VCS_STORE_KEY,
   RECEIVED_VCS_STORE_KEY,
   SETTINGS_STORE_KEY,
-  FACE_AUTH_CONSENT,
+  SHOW_FACE_AUTH_CONSENT_SHARE_FLOW,
   ENOENT,
 } from '../shared/constants';
-import SecureKeystore from '@mosip/secure-keystore';
+import {NativeModules} from 'react-native';
 import {
   AUTH_TIMEOUT,
   decryptJson,
@@ -45,6 +45,7 @@ export const keyinvalidatedString =
   'Key Invalidated due to biometric enrollment';
 export const tamperedErrorMessageString = 'Data is tampered';
 
+const {RNSecureKeystoreModule} = NativeModules;
 const model = createModel(
   {
     encryptionKey: '',
@@ -76,6 +77,7 @@ const model = createModel(
         requester,
       }),
       STORE_ERROR: (error: Error, requester?: string) => ({error, requester}),
+      FETCH_ALL_WELLKNOWN_CONFIG: () => ({}),
     },
   },
 );
@@ -232,6 +234,9 @@ export const storeMachine =
             CLEAR: {
               actions: 'forwardStoreRequest',
             },
+            FETCH_ALL_WELLKNOWN_CONFIG: {
+              actions: 'forwardStoreRequest',
+            },
             STORE_RESPONSE: {
               actions: [
                 send(
@@ -294,12 +299,13 @@ export const storeMachine =
       services: {
         clear: () => clear(),
         hasAndroidEncryptionKey: () => async callback => {
-          const hasSetCredentials = SecureKeystore.hasAlias(ENCRYPTION_ID);
+          const hasSetCredentials =
+            RNSecureKeystoreModule.hasAlias(ENCRYPTION_ID);
           if (hasSetCredentials) {
             try {
               const base64EncodedString =
                 Buffer.from('Dummy').toString('base64');
-              await SecureKeystore.encryptData(
+              await RNSecureKeystoreModule.encryptData(
                 DUMMY_KEY_FOR_BIOMETRIC_ALIAS,
                 base64EncodedString,
               );
@@ -440,6 +446,13 @@ export const storeMachine =
                   await clear();
                   break;
                 }
+                case 'FETCH_ALL_WELLKNOWN_CONFIG': {
+                  response = await fetchAllWellknownConfig(
+                    context.encryptionKey,
+                  );
+                  break;
+                }
+
                 default:
                   return;
               }
@@ -525,14 +538,15 @@ export const storeMachine =
               );
             }
           } else {
-            const isBiometricsEnabled = SecureKeystore.hasBiometricsEnabled();
-            await SecureKeystore.generateKey(
+            const isBiometricsEnabled =
+              RNSecureKeystoreModule.hasBiometricsEnabled();
+            await RNSecureKeystoreModule.generateKey(
               ENCRYPTION_ID,
               isBiometricsEnabled,
               AUTH_TIMEOUT,
             );
-            SecureKeystore.generateHmacshaKey(HMAC_ALIAS);
-            SecureKeystore.generateKey(
+            RNSecureKeystoreModule.generateHmacshaKey(HMAC_ALIAS);
+            RNSecureKeystoreModule.generateKey(
               DUMMY_KEY_FOR_BIOMETRIC_ALIAS,
               isBiometricsEnabled,
               0,
@@ -563,7 +577,7 @@ export async function setItem(
         appId,
       };
       encryptedData = JSON.stringify(settings);
-    } else if (key === FACE_AUTH_CONSENT) {
+    } else if (key === SHOW_FACE_AUTH_CONSENT_SHARE_FLOW) {
       encryptedData = JSON.stringify(value);
     } else {
       encryptedData = await encryptJson(encryptionKey, JSON.stringify(value));
@@ -583,6 +597,10 @@ export async function loadBackupData(data, encryptionKey) {
   await Storage.loadBackupData(data, encryptionKey);
 }
 
+export async function fetchAllWellknownConfig(encryptionKey: string) {
+  return await Storage.fetchAllWellknownConfig(encryptionKey);
+}
+
 export async function getVCsData(key: string, encryptionKey: string) {
   try {
     let vcsData: Record<string, VC> = {};
@@ -596,7 +614,7 @@ export async function getVCsData(key: string, encryptionKey: string) {
         const vc = await getItem(vcKey, null, encryptionKey);
         vcsData[vcKey] = vc;
       } catch (e) {
-        console.log('error: ', e);
+        console.error(`error occurred while getting vc's data - ${vcKey}`, e);
         if (
           e.message.includes(tamperedErrorMessageString) ||
           e.message.includes(ENOENT)
@@ -632,7 +650,7 @@ export async function getItem(
           parsedData.encryptedData = JSON.parse(decryptedData);
         }
         return parsedData;
-      } else if (key === FACE_AUTH_CONSENT) {
+      } else if (key === SHOW_FACE_AUTH_CONSENT_SHARE_FLOW) {
         return JSON.parse(data);
       }
       decryptedData = await decryptJson(encryptionKey, data);
@@ -863,9 +881,9 @@ export async function removeTamperedVcMetaData(
 
 export async function clear() {
   try {
-    console.log('clearing entire storage');
+    console.warn('clearing entire storage');
     if (isHardwareKeystoreExists) {
-      SecureKeystore.clearKeys();
+      RNSecureKeystoreModule.clearKeys();
     }
     await Storage.clear();
   } catch (e) {

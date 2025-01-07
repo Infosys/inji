@@ -7,12 +7,16 @@ import {
   ViewStyle,
 } from 'react-native';
 import {Spacing} from '../styleUtils';
-import {isIOS} from '../../../shared/constants';
+import {COPILOT_HEIGHT, isIOS} from '../../../shared/constants';
 import Constants from 'expo-constants';
-
+import HomeScreenLogo from '../../../assets/InjiHomeLogo.svg'
+import InjiLogoSmall from '../../../assets/InjiLogo.svg'
 const Colors = {
   Black: '#000000',
   Zambezi: '#5F5F5F',
+  Violet: '#5B03AD',
+  BrightOrange: '#FF5300',
+  Magenta: '#951F6F',
   Grey: '#C7C7C7',
   Grey5: '#E0E0E0',
   Grey6: '#F2F2F2',
@@ -26,7 +30,7 @@ const Colors = {
   DimGray: '#737373',
   DarkGray: '#A5A5A5',
   platinumGrey: '#EDEDED',
-  Orange: '#F2811D',
+  Orange: '#951F6F',
   OrangeBrown: '#D9822B',
   Blue: '#0000FF',
   LightGrey: '#F8F8F8',
@@ -41,18 +45,19 @@ const Colors = {
   GrayText: '#6F6F6F',
   mediumLightGrayText: '#A7A7A7',
   dorColor: '#CBCBCB',
-  plainText: '#FFD6A7',
+  plainText: '#FFFFFF',
   walletbindingLabel: '#000000',
-  LightOrange: '#FDF1E6',
-  GradientColors: ['#F59B4B', '#E86E04'],
+  LightOrange: '#F7EDF3',
+  GradientColors: ['#FF5300', '#5B03AD'],
+  GradientColorsLight: ['#FF5300'+14, '#5B03AD'+14],
   DisabledColors: ['#C7C7C7', '#C7C7C7'],
   TimeoutHintBoxColor: '#FFF7E5',
   TimeoutHintBoxBorder: '#FFF2D6',
   TimeoutHintText: '#8B6105',
   resendCodeTimer: '#555555',
   uncheckedIcon: '#DBDBDB',
-  startColor: '#f59b4b',
-  endColor: '#e86e04',
+  startColor: '#ff5300',
+  endColor: '#5b03ad',
   stroke: '#ee8123',
   iconBg: '#ffa85a',
   warningLogoBg: '#FFF7E5',
@@ -60,6 +65,7 @@ const Colors = {
   toolTipContent: '#4B4B4B',
   toolTipPointer: '#E0E0E0',
   Mercury: '#E6E6E6',
+  Yellow: '#E8A94F',
 };
 
 export type ElevationLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -112,11 +118,12 @@ export const DefaultTheme = {
     DefaultToggle: Colors.LightOrange,
     GrayText: Colors.GrayText,
     errorGrayText: Colors.mediumDarkGrey,
-    gradientBtn: ['#F59B4B', '#E86E04'],
+    gradientBtn: ['#FF5300', '#5B03AD'],
     dotColor: Colors.dorColor,
     plainText: Colors.plainText,
     IconBackground: Colors.LightOrange,
     GradientColors: Colors.GradientColors,
+    GradientColorsLight: Colors.GradientColorsLight,
     DisabledColors: Colors.DisabledColors,
     getVidColor: Colors.Zambezi,
     TimeoutHintBoxColor: Colors.TimeoutHintBoxColor,
@@ -132,12 +139,15 @@ export const DefaultTheme = {
     chevronRightColor: Colors.Grey,
     linearGradientStart: Colors.startColor,
     linearGradientEnd: Colors.endColor,
+    linearIconGradientStart: Colors.startColor,
+    linearIconGradientEnd: Colors.endColor,
     LinearGradientStroke: Colors.stroke,
     warningLogoBgColor: Colors.warningLogoBg,
     tooltipIcon: Colors.toolTip,
     toolTipPointerColor: Colors.toolTipPointer,
     urlLink: Colors.Orange,
     warningText: Colors.Red,
+    PendingIcon: Colors.Yellow,
   },
   Styles: StyleSheet.create({
     title: {
@@ -168,9 +178,9 @@ export const DefaultTheme = {
       backgroundColor: Colors.Grey,
       borderRadius: 4,
     },
-    detailsValue: {
-      color: Colors.Black,
+    verificationStatus: {
       fontSize: 12,
+      fontFamily: 'Inter_600SemiBold',
     },
     statusLabel: {
       color: Colors.Gray30,
@@ -195,10 +205,10 @@ export const DefaultTheme = {
       justifyContent: 'center',
       width: '15%',
     },
-    verifiedIconContainer: {
+    verificationStatusIconContainer: {
       marginRight: 3,
     },
-    verifiedIconInner: {
+    verificationStatusIconInner: {
       backgroundColor: 'white',
       borderRadius: 10,
     },
@@ -227,7 +237,6 @@ export const DefaultTheme = {
       width: Dimensions.get('window').width * 0.12,
       height: Dimensions.get('window').height * 0.045,
       borderRadius: 6,
-      backgroundColor: Colors.LightOrange,
     },
     homeScreenContainer: {
       alignItems: 'center',
@@ -341,6 +350,17 @@ export const DefaultTheme = {
       marginTop: 10,
       alignItems: 'flex-start',
     },
+    vcDetailBg: {
+      width: '100%',
+      opacity: 0.1,
+    },
+    vcBg: {
+      opacity: 0.1,
+    },
+    shimmer: {
+      borderRadius: 5,
+      marginLeft: 2,
+    },
     openCardBgContainer: {
       borderRadius: 10,
       margin: 8,
@@ -387,8 +407,12 @@ export const DefaultTheme = {
       justifyContent: 'space-between',
     },
     welcomeLogo: {
-      width: 160.441,
-      height: 173.276,
+      width: 185,
+      height: 71,
+    },
+    injiLogo: {
+      width: 191.58,
+      height: 28,
     },
     logo: {
       height: 35,
@@ -445,16 +469,13 @@ export const DefaultTheme = {
     },
     IconContainer: {
       padding: 6,
-      width: 36,
+      width: 25,
       marginRight: 4,
       marginLeft: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
       height: 36,
       borderRadius: 10,
-      backgroundColor: Colors.LightOrange,
-    },
-    cameraFlipIcon: {
-      height: 42,
-      width: 42,
     },
     imageCaptureButton: {
       marginLeft: 130,
@@ -465,7 +486,6 @@ export const DefaultTheme = {
       width: 36,
       height: 36,
       borderRadius: 10,
-      backgroundColor: Colors.LightOrange,
     },
     receiveCardsContainer: {
       height: Dimensions.get('window').height * 0.14,
@@ -520,7 +540,6 @@ export const DefaultTheme = {
       borderRadius: 14,
     },
     primaryRow: {
-      backgroundColor: Colors.LightOrange,
       paddingHorizontal: 18,
       paddingVertical: 9,
       justifyContent: 'space-between',
@@ -528,41 +547,6 @@ export const DefaultTheme = {
     iconContainer: {
       flexDirection: 'row',
       alignItems: 'flex-end',
-    },
-    scannerContainer: {
-      borderRadius: 24,
-      alignSelf: 'center',
-      height: 350,
-      width: 320,
-      overflow: 'hidden',
-    },
-    scanner: {
-      height: 400,
-      width: '100%',
-      margin: 'auto',
-    },
-    disabledScannerContainer: {
-      borderRadius: 24,
-      height: 350,
-      width: '100%',
-      margin: 'auto',
-      backgroundColor: Colors.White,
-      borderWidth: 1,
-      borderColor: Colors.Gray89,
-    },
-    cameraDisabledPopupContainer: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-    },
-    cameraDisabledPopUp: {
-      justifyContent: 'space-between',
-      backgroundColor: Colors.Red,
-      position: 'relative',
-      padding: 20,
-      paddingHorizontal: 15,
-      marginTop: -24,
     },
     photoConsentLabel: {
       backgroundColor: Colors.White,
@@ -631,17 +615,21 @@ export const DefaultTheme = {
       borderBottomColor: Colors.platinumGrey,
       borderBottomWidth: 1.3,
     },
+    downloadFabIconCopilotContainer: {
+      height: 70,
+      width: 70,
+      borderRadius: 200,
+      position: 'absolute',
+      bottom: Dimensions.get('window').width * 0.1,
+      right: Dimensions.get('window').width * 0.1,
+    },
     downloadFabIconContainer: {
       height: 70,
       width: 70,
       borderRadius: 200,
-      padding: 10,
       shadowColor: '#000',
       shadowOpacity: 0.4,
       elevation: 5,
-      position: 'absolute',
-      bottom: Dimensions.get('window').width * 0.1,
-      right: Dimensions.get('window').width * 0.1,
     },
     downloadFabIconNormal: {
       borderRadius: 200,
@@ -698,11 +686,8 @@ export const DefaultTheme = {
       paddingHorizontal: 24,
     },
     newLabel: {
-      backgroundColor: Colors.Orange,
       paddingHorizontal: 5,
-      paddingVertical: 4,
       maxHeight: 20,
-      marginTop: 10,
       borderRadius: 4,
       fontSize: 10,
       fontFamily: 'Inter_700Bold',
@@ -731,6 +716,35 @@ export const DefaultTheme = {
       fontFamily: 'Inter_600SemiBold',
       marginTop: isIOS() ? 5 : 15,
     },
+    tabBarIconCopilot: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      minWidth: 70,
+      minHeight: 65,
+      marginBottom: -5,
+    },
+    copilotStyle: {
+      position: 'absolute',
+      left: 10,
+      right: 10,
+      borderRadius: 8,
+      maxWidth: Dimensions.get('screen').width,
+      minHeight: Dimensions.get('screen').height * COPILOT_HEIGHT,
+    },
+    copilotButton: {
+      width: 104,
+      height: 40,
+      marginLeft: 10,
+    },
+    copilotButtonsContainer: {
+      marginTop: 25,
+      marginBottom: 15,
+    },
+    copilotBgContainer: {
+      flex: 1,
+      justifyContent: 'space-around',
+    },
   }),
   BannerStyles: StyleSheet.create({
     container: {
@@ -756,7 +770,7 @@ export const DefaultTheme = {
       fontFamily: 'Inter_600SemiBold',
     },
     dismiss: {paddingLeft: 9},
-    info: {
+    inProgress: {
       backgroundColor: Colors.OrangeBrown,
     },
     success: {
@@ -814,6 +828,9 @@ export const DefaultTheme = {
       shadowRadius: 3,
       marginTop: 14,
     },
+    shareQrCodeButton: {
+      marginTop: 30,
+    },
   }),
   PinInputStyle: StyleSheet.create({
     input: {
@@ -823,7 +840,7 @@ export const DefaultTheme = {
       flex: 1,
       fontSize: 33,
       fontFamily: 'Inter_600SemiBold',
-      height: 60,
+      height: 40,
       lineHeight: 28,
       margin: 8,
       textAlign: 'center',
@@ -1261,7 +1278,9 @@ export const DefaultTheme = {
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
       width: Dimensions.get('screen').width,
-      marginTop: Dimensions.get('screen').height * 0.55,
+      maxHeight: 300,
+      position: 'absolute',
+      bottom: 0,
     },
     kebabHeaderStyle: {
       justifyContent: 'space-between',
@@ -1499,27 +1518,119 @@ export const DefaultTheme = {
   }),
   HelpScreenStyle: StyleSheet.create({
     viewStyle: {
-      width: 100,
-      padding: 7,
       borderRadius: 8,
-      backgroundColor: Colors.LightOrange,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingLeft: 16,
+      paddingRight: 16,
+      paddingBottom: 10,
+      paddingTop: 10,
     },
     rowStyle: {
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: 45,
       display: 'flex',
     },
     iconStyle: {
-      paddingTop: 7,
-      paddingLeft: 20,
       paddingRight: 5,
     },
     labelStyle: {
-      width: 70,
       fontWeight: 'bold',
     },
   }),
+  CameraDisabledStyles: StyleSheet.create({
+    container: {
+      position: 'absolute',
+      width: Dimensions.get('screen').width,
+    },
+    banner: {
+      justifyContent: 'space-between',
+      backgroundColor: Colors.Red,
+      padding: 20,
+      paddingHorizontal: 15,
+      marginTop: -24,
+    },
+    bannerTextContainer: {
+      justifyContent: 'space-between',
+    },
+    bannerTitle: {
+      fontFamily: 'Inter_600SemiBold',
+    },
+    bannerGuide: {
+      opacity: 0.8,
+      fontFamily: 'Inter_400Regular',
+    },
+    bannerEnablePermissionContainer: {
+      marginTop: 15,
+    },
+    bannerEnablePermission: {
+      borderBottomWidth: 1.5,
+      borderBottomColor: Colors.White,
+      fontFamily: 'Inter_600SemiBold',
+    },
+    scannerContainer: {
+      borderRadius: 24,
+      height: 350,
+      width: 320,
+      marginTop: 40,
+      backgroundColor: Colors.White,
+      borderWidth: 1,
+      borderColor: Colors.Gray89,
+    },
+  }),
+
+  CameraEnabledStyles: StyleSheet.create({
+    scannerContainer: {
+      borderRadius: 24,
+      alignSelf: 'center',
+      height: 350,
+      width: 320,
+      overflow: 'hidden',
+    },
+    scanner: {
+      height: 400,
+      width: '100%',
+      margin: 'auto',
+    },
+    guideContainer: {
+      flex: 1,
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
+    guideContentContainer: {
+      backgroundColor: '#ffffff',
+      borderRadius: 9,
+      width: Dimensions.get('window').width * 0.85,
+      alignItems: 'center',
+      marginTop: Dimensions.get('window').height * 0.12,
+      padding: 3,
+    },
+    buttonContainer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+    },
+    cancelButton: {
+      backgroundColor: '#ffffff',
+      borderRadius: 9,
+      width: Dimensions.get('window').width * 0.3,
+      alignSelf: 'center',
+      alignItems: 'center',
+      height: 40,
+      marginBottom: Dimensions.get('window').height * 0.1,
+    },
+    holdPhoneSteadyText: {
+      color: Colors.Black,
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 15,
+    },
+    cameraFlipIcon: {
+      height: 50,
+      width: 50,
+    },
+    iconText: {fontFamily: 'Inter_600SemiBold', fontSize: 12, marginTop: 6},
+  }),
+
   BottomTabBarStyle: StyleSheet.create({
     headerRightContainerStyle: {paddingEnd: 13},
     headerLeftContainerStyle: {paddingEnd: 13},
@@ -1543,11 +1654,14 @@ export const DefaultTheme = {
   ICON_LARGE_SIZE: 33,
   CloseCard: require('../../../assets/Card_Bg1.png'),
   OpenCard: require('../../../assets/Card_Bg1.png'),
-  IntroWelcome: require('../../../assets/Intro_Unlock.png'),
-  SecureSharing: require('../../../assets/Intro_Secure_Sharing.png'),
-  DigitalWallet: require('../../../assets/Intro_Wallet.png'),
-  IntroShare: require('../../../assets/Intro_Share.png'),
-  IntroBackup: require('../../../assets/Intro_Backup.png'),
+  IntroWelcome: require('../../../assets/biometricIntro.png'),
+  SecureSharing: require('../../../assets/secureSharing.png'),
+  DigitalWallet: require('../../../assets/trustedDigitalWallet.png'),
+  IntroShare: require('../../../assets/quickAccess.png'),
+  IntroBackup: require('../../../assets/backupRestoreIntro.png'),
+  IntroSliderbackground: require('../../../assets/IntroBg.png'),
+  HomeScreenLogo: HomeScreenLogo,
+  InjiLogoSmall: InjiLogoSmall,
   elevation(level: ElevationLevel): ViewStyle {
     // https://ethercreative.github.io/react-native-shadow-generator/
 
@@ -1589,6 +1703,10 @@ export const DefaultTheme = {
       [`${type}Start`]: start != null ? start : end != null ? end : top,
     };
   },
+  LinearGradientDirection: {
+    start: {x:0.5,y:0.5},
+    end: {x:1,y:0.5}
+  }
 };
 
 function generateBoxShadowStyle() {

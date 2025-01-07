@@ -6,7 +6,7 @@ import {useQrLogin} from './QrLoginController';
 import {Image, View} from 'react-native';
 import {Icon, ListItem, Switch} from 'react-native-elements';
 import {Modal} from '../../components/ui/Modal';
-import {QrLoginRef} from '../../machines/QrLoginMachine';
+import {QrLoginRef} from '../../machines/QrLogin/QrLoginMachine';
 import {ScrollView} from 'react-native';
 import {getClientNameForCurrentLanguage} from '../../i18n';
 
@@ -116,6 +116,7 @@ export const QrConsent: React.FC<QrConsentProps> = props => {
           style={Theme.Styles.bottomButtonsContainer}
           elevation={5}>
           <Button
+            type='gradient'
             margin={'6 10 0 10'}
             styles={Theme.ButtonStyles.radius}
             title={t('allow')}

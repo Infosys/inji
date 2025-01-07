@@ -4,7 +4,7 @@ import {
   getFreeDiskStorageOldSync,
   getFreeDiskStorageSync,
 } from 'react-native-device-info';
-import SecureKeystore from '@mosip/secure-keystore';
+import {NativeModules} from 'react-native';
 import {
   decryptJson,
   encryptJson,
@@ -19,6 +19,7 @@ import {
   MY_VCS_STORE_KEY,
   SETTINGS_STORE_KEY,
   ENOENT,
+  API_CACHED_STORAGE_KEYS,
 } from './constants';
 import FileStorage, {
   getFilePath,
@@ -31,8 +32,12 @@ import {TelemetryConstants} from './telemetry/TelemetryConstants';
 import {BYTES_IN_MEGABYTE} from './commonUtil';
 import fileStorage from './fileStorage';
 import {DocumentDirectoryPath, ReadDirItem} from 'react-native-fs';
+import {verifyCredential} from './vcjs/verifyCredential';
+import {Credential} from '../machines/VerifiableCredential/VCMetaMachine/vc';
+import {isMosipVC} from './Utils';
 
 export const MMKV = new MMKVLoader().initialize();
+const {RNSecureKeystoreModule} = NativeModules;
 
 async function generateHmac(
   encryptionKey: string,
@@ -41,7 +46,7 @@ async function generateHmac(
   if (!isHardwareKeystoreExists) {
     return hmacSHA(encryptionKey, data);
   }
-  return await SecureKeystore.generateHmacSha(HMAC_ALIAS, data);
+  return await RNSecureKeystoreModule.generateHmacSha(HMAC_ALIAS, data);
 }
 
 class Storage {
@@ -146,9 +151,30 @@ class Storage {
         return true;
       });
     } catch (error) {
+      console.error('Error while loading backup data ', error);
       return error;
     }
   };
+
+  static fetchAllWellknownConfig = async (encryptionKey: string) => {
+    let wellknownConfigData: Record<string, Object> = {};
+    const allKeysInDB = await MMKV.indexer.strings.getKeys();
+    const wellknownConfigCacheKey =
+      API_CACHED_STORAGE_KEYS.fetchIssuerWellknownConfig('');
+    const wellknownKeys = allKeysInDB.filter(key =>
+      key.includes(wellknownConfigCacheKey),
+    );
+
+    for (const wellknownKey of wellknownKeys) {
+      const configData = await this.getItem(wellknownKey, encryptionKey);
+      const decryptedConfigData = await decryptJson(encryptionKey, configData);
+      wellknownConfigData[
+        wellknownKey.substring(wellknownConfigCacheKey.length)
+      ] = JSON.parse(JSON.stringify(decryptedConfigData));
+    }
+    return wellknownConfigData;
+  };
+
   static isVCStorageInitialised = async (): Promise<boolean> => {
     try {
       const res = await FileStorage.getInfo(vcDirectoryPath);
@@ -289,35 +315,60 @@ class Storage {
     }
   }
 
+  private static async verifyCredential(
+    verifiableCredential: Credential,
+    issuer: string,
+  ) {
+    let isVerified = true;
+    if (isMosipVC(issuer)) {
+      const verificationResult = await verifyCredential(verifiableCredential);
+      isVerified = verificationResult.isVerified;
+    }
+    return isVerified;
+  }
+
   private static async loadVCs(completeBackupData: {}, encryptionKey: any) {
     try {
       const allVCs = completeBackupData['VC_Records'];
       const allVCKeys = Object.keys(allVCs);
       const dataFromDB = completeBackupData['dataFromDB'];
+
       // 0. Check for VC presense in the store
       // 1. store the VCs and the HMAC
-      allVCKeys.forEach(async key => {
-        let vc = allVCs[key];
-        const ts = Date.now();
-        const prevUnixTimeStamp = vc.vcMetadata.timestamp;
-        vc.vcMetadata.timestamp = ts;
-        dataFromDB.myVCs.forEach(myVcMetadata => {
-          if (
-            myVcMetadata.requestId === vc.vcMetadata.requestId &&
-            myVcMetadata.timestamp === prevUnixTimeStamp
-          ) {
-            myVcMetadata.timestamp = ts;
-          }
-        });
-        const updatedVcKey = new VCMetadata(vc.vcMetadata).getVcKey();
-        const encryptedVC = await encryptJson(
-          encryptionKey,
-          JSON.stringify(vc),
-        );
-        const tmp = VCMetadata.fromVC(key);
-        // Save the VC to disk
-        await this.setItem(updatedVcKey, encryptedVC, encryptionKey);
-      });
+      // 2. Verify the VC and update the result
+
+      await Promise.all(
+        allVCKeys.map(async key => {
+          const vc = allVCs[key];
+          const ts = Date.now();
+          const prevUnixTimeStamp = vc.vcMetadata.timestamp;
+
+          const isVerified = await Storage.verifyCredential(
+            vc.verifiableCredential?.credential || vc.verifiableCredential,
+            vc.vcMetadata.issuer,
+          );
+          vc.vcMetadata.timestamp = ts;
+          vc.vcMetadata.isVerified = isVerified;
+
+          dataFromDB.myVCs.map(async myVcMetadata => {
+            if (
+              myVcMetadata.requestId === vc.vcMetadata.requestId &&
+              myVcMetadata.timestamp === prevUnixTimeStamp
+            ) {
+              myVcMetadata.timestamp = ts;
+            }
+            myVcMetadata.isVerified = isVerified;
+          });
+          const updatedVcKey = new VCMetadata(vc.vcMetadata).getVcKey();
+
+          const encryptedVC = await encryptJson(
+            encryptionKey,
+            JSON.stringify(vc),
+          );
+          // Save the VC to disk
+          await this.setItem(updatedVcKey, encryptedVC, encryptionKey);
+        }),
+      );
       // 2. Update myVCsKey
       const dataFromMyVCKey = dataFromDB[MY_VCS_STORE_KEY];
       const encryptedMyVCKeyFromMMKV = await MMKV.getItem(MY_VCS_STORE_KEY);

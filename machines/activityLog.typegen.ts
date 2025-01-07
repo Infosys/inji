@@ -13,16 +13,21 @@ export interface Typegen0 {
     services: never;
   };
   eventsCausingActions: {
+    fetchAllWellKnownConfigResponse: 'STORE_RESPONSE';
     loadActivities: 'REFRESH' | 'xstate.init';
+    loadWellknownIntoContext: 'LOG_ACTIVITY';
     prependActivity: 'STORE_RESPONSE';
     setActivities: 'STORE_RESPONSE';
+    setAllWellknownConfigResponse: 'STORE_RESPONSE';
     storeActivity: 'LOG_ACTIVITY';
+    storeWellknownConfig: 'STORE_INCOMING_VC_WELLKNOWN_CONFIG';
   };
   eventsCausingDelays: {};
   eventsCausingGuards: {};
   eventsCausingServices: {};
   matchesStates:
     | 'init'
+    | 'loadWellknownConfig'
     | 'ready'
     | 'ready.idle'
     | 'ready.logging'

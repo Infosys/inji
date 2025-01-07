@@ -1,0 +1,60 @@
+{
+  "originHash" : "37844cf80fe1416dd9922e75c396bd616f0723f347f5649a1c0355a3ba3f3a82",
+  "pins" : [
+    {
+      "identity" : "base45-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ehn-dcc-development/base45-swift",
+      "state" : {
+        "revision" : "c1db97d793d02a1c3d56d50a738c8fd8c34372f8",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "crcswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ivanesik/CrcSwift.git",
+      "state" : {
+        "revision" : "bb2fff7fb79815fad0528da71c9168d570bfc76c",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "gzipswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/1024jp/GzipSwift",
+      "state" : {
+        "revision" : "7a7f17761c76a932662ab77028a4329f67d645a4",
+        "version" : "5.2.0"
+      }
+    },
+    {
+      "identity" : "inji-vci-client-ios-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mosip/inji-vci-client-ios-swift.git",
+      "state" : {
+        "branch" : "0.1.1",
+        "revision" : "39684d021a16e4683e9407594104c10a2ef5db67"
+      }
+    },
+    {
+      "identity" : "pixelpass-ios-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mosip/pixelpass-ios-swift/",
+      "state" : {
+        "revision" : "9e2da5077242b903f694e6300627c9c282ebba51",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "tuvali-ios-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mosip/tuvali-ios-swift/",
+      "state" : {
+        "revision" : "2d49e123f70dfc2179983a753d370cc2212385db",
+        "version" : "0.5.0"
+      }
+    }
+  ],
+  "version" : 2
+}

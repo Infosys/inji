@@ -13,10 +13,7 @@ export function selectSelectedIssuer(state: State) {
 }
 
 export function selectErrorMessageType(state: State) {
-  const nonGenericErrors = ['', ErrorMessage.NO_INTERNET];
-  return nonGenericErrors.includes(state.context.errorMessage)
-    ? state.context.errorMessage
-    : ErrorMessage.GENERIC;
+  return state.context.errorMessage;
 }
 
 export function selectLoadingReason(state: State) {
@@ -54,6 +51,6 @@ export function selectSelectingCredentialType(state: State) {
   return state.matches('selectingCredentialType');
 }
 
-export function selectCredentialTypes(state: State) {
-  return state.context.credentialTypes;
+export function selectSupportedCredentialTypes(state: State) {
+  return state.context.supportedCredentialTypes;
 }

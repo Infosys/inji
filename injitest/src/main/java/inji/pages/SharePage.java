@@ -60,10 +60,30 @@ public class SharePage extends BasePage {
     @iOSXCUITFindBy(accessibility = "cameraAccessDisabled")
     private WebElement cameraAccessDisabledPopup;
 
+    @AndroidFindBy(xpath = "//*[@resource-id=\"com.android.permissioncontroller:id/permission_allow_one_time_button\"]")
+    private WebElement locationAccessPopup;
 
+    @AndroidFindBy(xpath = "//*[@resource-id=\"com.android.permissioncontroller:id/permission_allow_one_time_button\"]")
+    private WebElement gallaryAccessPopup;
 
     @AndroidFindBy(xpath = "//android.widget.TextView[@resource-id=\"close\"]")
     private WebElement closePopupButton;
+
+    @AndroidFindBy(xpath = "//android.widget.Button[@resource-id=\"com.android.permissioncontroller:id/permission_deny_button\"]")
+    @iOSXCUITFindBy(accessibility = "Don’t Allow")
+    private WebElement cameraDontAllowAccessPopup;
+
+    @AndroidFindBy(accessibility = "holdPhoneSteadyMessage")
+    @iOSXCUITFindBy(accessibility = "cameraAccessDisabled")
+    private WebElement cameraDisabledToaster;
+
+    @AndroidFindBy(xpath = "//android.widget.TextView[@resource-id=\"close\"]")
+    @iOSXCUITFindBy(accessibility = "close")
+    private WebElement cameraDisabledToasterClose;
+
+    @AndroidFindBy(accessibility = "sharingStatusTitle")
+    @iOSXCUITFindBy(accessibility = "sharingStatusTitle")
+    private WebElement cameraAccessLostPage;
 
 
     public SharePage(AppiumDriver driver) {
@@ -156,4 +176,31 @@ public class SharePage extends BasePage {
          clickOnElement(closePopupButton);
     }
 
+    public void clickOnAllowLocationPopupButton(){
+        if(isElementDisplayed(locationAccessPopup))
+        clickOnElement(locationAccessPopup);
+    }
+
+    public void clickOnAllowGallaryAccessButton(){
+        if(isElementDisplayed(gallaryAccessPopup))
+        clickOnElement(gallaryAccessPopup);
+    }
+
+    public boolean isCameraDisabledToasterLoaded() {
+        return isElementDisplayed(cameraDisabledToaster);
+    }
+
+    public void clickOnCameraDisabledToasterClose(){
+        if(isElementDisplayed(cameraDisabledToasterClose))
+            clickOnElement(cameraDisabledToasterClose);
+    }
+
+    public void clickOnDontAllowCameraAccessButton(){
+        if(isElementDisplayed(cameraDontAllowAccessPopup))
+            clickOnElement(cameraDontAllowAccessPopup);
+    }
+
+    public boolean isCameraAccessLostPageLoaded() {
+        return isElementDisplayed(cameraAccessLostPage);
+    }
 }

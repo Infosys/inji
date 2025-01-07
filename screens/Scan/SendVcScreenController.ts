@@ -9,16 +9,14 @@ import {
   selectReceiverInfo,
   selectVcName,
   selectVerifiableCredentialData,
-} from '../../machines/bleShare/scan/selectors';
+} from '../../machines/bleShare/scan/scanSelectors';
 import {
   selectIsCancelling,
   selectIsInvalidIdentity,
   selectIsVerifyingIdentity,
 } from '../../machines/bleShare/commonSelectors';
-import {
-  ScanEvents,
-  selectIsFaceVerificationConsent,
-} from '../../machines/bleShare/scan/scanMachine';
+import {ScanEvents} from '../../machines/bleShare/scan/scanMachine';
+import {selectIsFaceVerificationConsent} from '../../machines/bleShare/scan/scanSelectors';
 import {VCShareFlowType} from '../../shared/Utils';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootRouteProps} from '../../routes';
@@ -63,8 +61,10 @@ export function useSendVcScreen() {
     ),
     CANCEL: () => scanService.send(ScanEvents.CANCEL()),
     ACCEPT_REQUEST: () => scanService.send(ScanEvents.ACCEPT_REQUEST()),
-    FACE_VERIFICATION_CONSENT: (isConsentGiven: boolean) =>
-      scanService.send(ScanEvents.FACE_VERIFICATION_CONSENT(isConsentGiven)),
+    FACE_VERIFICATION_CONSENT: (isDoNotAskAgainChecked: boolean) =>
+      scanService.send(
+        ScanEvents.FACE_VERIFICATION_CONSENT(isDoNotAskAgainChecked),
+      ),
     VERIFY_AND_ACCEPT_REQUEST: () =>
       scanService.send(ScanEvents.VERIFY_AND_ACCEPT_REQUEST()),
     DISMISS: () => scanService.send(ScanEvents.DISMISS()),
@@ -80,7 +80,8 @@ export function useSendVcScreen() {
     SELECT_VC_ITEM:
       (index: number) => (vcRef: ActorRefFrom<typeof VCItemMachine>) => {
         setSelectedIndex(index);
-        const {serviceRefs, ...vcData} = vcRef.getSnapshot().context;
+        const {serviceRefs, wellknownResponse, ...vcData} =
+          vcRef.getSnapshot().context;
         scanService.send(
           ScanEvents.SELECT_VC(vcData, VCShareFlowType.SIMPLE_SHARE),
         );
